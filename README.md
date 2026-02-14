@@ -8,7 +8,7 @@ def fibonacci(n):
 t=int(input())
 print(fibonacci(t-1))
 
-#Calcular el iva de un producto
+# Calcular el iva de un producto
 def IVA(n, r):
     Val=n+n*(r/100)
     return Val
