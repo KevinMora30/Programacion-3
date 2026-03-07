@@ -1,0 +1,193 @@
+#Lab 2
+
+import numpy as np
+import random
+
+class OperacionesMatrices:
+
+    def __init__(self):
+        self.MatrizA = None
+        self.MatrizB = None
+        self.Vector = None
+
+    def ingresarMatriz(self, nombre="Matriz"):
+        print(f"Ingreso de {nombre}")
+        filas = int(input("Numero de filas: "))
+        columnas = int(input("Numero de columnas: "))
+
+        matriz = []
+        for i in range(filas):
+            fila = []
+            for j in range(columnas):
+                fila.append(float(input(f"[{i}][{j}] = ")))
+            matriz.append(fila)
+        return matriz
+
+    def ingresarVector(self):
+        n = int(input("Numero de elementos del vector: "))
+        vector = []
+        for i in range(n):
+            vector.append(float(input(f"v[{i}] = ")))
+        return vector
+
+    def mostrarMatriz(self, matriz, titulo="Resultado"):
+        print(f"\n{titulo}")
+        for fila in matriz:
+            print(fila)
+
+    def mostrarVector(self, vector, titulo="Resultado"):
+        print(f"\n{titulo}")
+        for i, v in enumerate(vector):
+            print(f"v[{i}] = {v}")
+
+    def sumaMatrices(self):
+        self.MatrizA = self.ingresarMatriz("Matriz A")
+        self.MatrizB = self.ingresarMatriz("Matriz B")
+
+        fa, ca = len(self.MatrizA), len(self.MatrizA[0])
+        fb, cb = len(self.MatrizB), len(self.MatrizB[0])
+
+        if fa != fb or ca != cb:
+            print("Las matrices deben tener el mismo tamaño")
+            return
+
+        resultado = [[self.MatrizA[i][j] + self.MatrizB[i][j] for j in range(ca)] for i in range(fa)]
+        self.mostrarMatriz(resultado, "A + B")
+
+    def productoMatrices(self):
+        self.MatrizA = self.ingresarMatriz("Matriz A")
+        self.MatrizB = self.ingresarMatriz("Matriz B")
+
+        fa, ca = len(self.MatrizA), len(self.MatrizA[0])
+        fb, cb = len(self.MatrizB), len(self.MatrizB[0])
+
+        if ca != fb:
+            print("Columnas de A deben ser iguales a filas de B")
+            return
+
+        resultado = [[0]*cb for _ in range(fa)]
+
+        for i in range(fa):
+            for j in range(cb):
+                for k in range(ca):
+                    resultado[i][j] += self.MatrizA[i][k] * self.MatrizB[k][j]
+
+        self.mostrarMatriz(resultado, "A x B")
+
+    def productoMatrizVector(self):
+        self.MatrizA = self.ingresarMatriz("Matriz A")
+        self.Vector = self.ingresarVector()
+
+        fa, ca = len(self.MatrizA), len(self.MatrizA[0])
+
+        if ca != len(self.Vector):
+            print("Dimensiones incompatibles")
+            return
+
+        resultado = [sum(self.MatrizA[i][j]*self.Vector[j] for j in range(ca)) for i in range(fa)]
+        self.mostrarVector(resultado, "A x v")
+
+
+
+class OrdenamientosAleatorios:
+
+    def generarLista(self):
+        self.n = int(input("Cantidad de números: "))
+        self.vectorbs = [round(random.uniform(0.1, 99.9), 2) for _ in range(self.n)]
+        print("Lista generada:", self.vectorbs)
+
+    def MetodoBurbuja(self):
+        Ordenada = self.vectorbs[:]
+        for i in range(len(Ordenada)):
+            for j in range(0, len(Ordenada)-i-1):
+                if Ordenada[j] > Ordenada[j+1]:
+                    Ordenada[j], Ordenada[j+1] = Ordenada[j+1], Ordenada[j]
+        print("Burbuja:", Ordenada)
+
+    def MetodoSeleccion(self):
+        Ordenada = self.vectorbs[:]
+        for i in range(len(Ordenada)):
+            minimo = i
+            for j in range(i+1, len(Ordenada)):
+                if Ordenada[j] < Ordenada[minimo]:
+                    minimo = j
+            Ordenada[i], Ordenada[minimo] = Ordenada[minimo], Ordenada[i]
+        print("Selección:", Ordenada)
+
+    def MetodoInsercion(self):
+        Ordenada = self.vectorbs[:]
+        for i in range(1, len(Ordenada)):
+            key = Ordenada[i]
+            j = i-1
+            while j >= 0 and key < Ordenada[j]:
+                Ordenada[j+1] = Ordenada[j]
+                j -= 1
+            Ordenada[j+1] = key
+        print("Inserción:", Ordenada)
+
+    def MetodoPythonSort(self):
+        copia = self.vectorbs[:]
+        copia.sort()
+        print("Python Sort:", copia)
+
+
+
+matrices = OperacionesMatrices()
+ordenamientos = OrdenamientosAleatorios()
+
+
+while True:
+
+    print("\n===== MENU PRINCIPAL =====")
+    print("1. Operaciones con matrices")
+    print("2. Métodos de ordenamiento")
+    print("0. Salir")
+
+    opcion = input("Seleccione una opción: ")
+
+    if opcion == "1":
+        while True:
+            print("\n--- OPERACIONES MATRICES ---")
+            print("1. Suma de matrices")
+            print("2. Producto de matrices")
+            print("3. Producto matriz x vector")
+            print("0. Volver")
+
+            op = input("Seleccione opción: ")
+
+            if op == "1":
+                matrices.sumaMatrices()
+            elif op == "2":
+                matrices.productoMatrices()
+            elif op == "3":
+                matrices.productoMatrizVector()
+            elif op == "0":
+                break
+
+    elif opcion == "2":
+        ordenamientos.generarLista()
+
+        while True:
+            print("\n--- METODOS DE ORDENAMIENTO ---")
+            print("1. Burbuja")
+            print("2. Selección")
+            print("3. Inserción")
+            print("4. Python Sort")
+            print("0. Volver")
+
+            op = input("Seleccione opción: ")
+
+            if op == "1":
+                ordenamientos.MetodoBurbuja()
+            elif op == "2":
+                ordenamientos.MetodoSeleccion()
+            elif op == "3":
+                ordenamientos.MetodoInsercion()
+            elif op == "4":
+                ordenamientos.MetodoPythonSort()
+            elif op == "0":
+                break
+
+    elif opcion == "0":
+        print("Programa finalizado")
+        break
