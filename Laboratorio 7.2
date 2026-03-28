@@ -1,0 +1,82 @@
+import tkinter as tk
+import time
+
+class RobotExplorador:
+    def __init__(self, ventana):
+        self.ventana = ventana
+        self.ventana.title("Robot Explorador")
+        self.ventana.geometry("400x450")
+        
+        self.pila_tareas = []
+        self.procesador_ocupado = False
+        
+
+        self.ts = 3000 
+        self.tm = 5000  
+
+        tk.Label(self.ventana, text="CONTROLADOR DE ROBOT", font=("Arial", 12, "bold")).pack(pady=10)
+        
+        tk.Button(self.ventana, text="Tarea Sensores (3s)", width=20, bg="white",
+                  command=self.boton_sensores).pack(pady=5)
+        
+        tk.Button(self.ventana, text="Tarea Movimiento (5s)", width=20, bg="white",
+                  command=self.boton_movimiento).pack(pady=5)
+
+        tk.Label(self.ventana, text="Tareas pendientes :").pack(pady=(15, 0))
+        self.lista_gui = tk.Listbox(self.ventana, width=35, height=8)
+        self.lista_gui.pack(pady=5)
+
+        self.lbl_estado = tk.Label(self.ventana, text="Sin Tareas ", fg="green", font=("Arial", 10, "bold"))
+        self.lbl_estado.pack(pady=20)
+
+
+    def boton_sensores(self):
+
+        self.agregar_a_pila("Sensores", self.ts)
+
+    def boton_movimiento(self):
+
+        self.agregar_a_pila("Movimiento", self.tm)
+
+    def actualizar_lista(self):
+
+        self.lista_gui.delete(0, tk.END)
+        for t in reversed(self.pila_tareas):
+            self.lista_gui.insert(tk.END, f" [ {t[0]} ]")
+
+    def agregar_a_pila(self, nombre, tiempo):
+
+        tarea = (nombre, tiempo)
+
+        if not self.procesador_ocupado:
+
+            self.ejecutar(tarea)
+        else:
+
+            self.pila_tareas.append(tarea)
+            self.actualizar_lista()
+
+    def ejecutar(self, tarea):
+
+        self.procesador_ocupado = True
+        nombre, tiempo = tarea
+        self.lbl_estado.config(text=f"Realizando : {nombre.upper()}", fg="red")
+        
+        self.ventana.after(tiempo, self.finalizar)
+
+    def finalizar(self):
+
+        if self.pila_tareas:
+
+            proxima = self.pila_tareas.pop()
+            self.actualizar_lista()
+            self.ejecutar(proxima)
+
+        else:
+
+            self.procesador_ocupado = False
+            self.lbl_estado.config(text="Finalizo Tareas", fg="green")
+
+ventana_principal = tk.Tk()
+app = RobotExplorador(ventana_principal)
+ventana_principal.mainloop()
